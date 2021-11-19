@@ -47,7 +47,7 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
             while (ResultSet.Read())
             {
                 //Access Column information by the DB column name as an index
-                int TeacherId = (int)ResultSet["teacherid"];
+                int TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
                 string TeacherFname = (string)ResultSet["teacherfname"];
                 string TeacherLname = (string)ResultSet["teacherlname"];
                 string EmployeeNumber = (string)ResultSet["employeenumber"];
@@ -87,11 +87,10 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
         /// <param name="id">The id of the teacher</param>
         /// <returns>The name of the teacher </returns>
         [HttpGet]
-        [Route("api/Data/findteacher/{id}")]
+        [Route("api/TeacherData/findteacher/{id}")]
       
         public Teacher FindTeacher (int id)
         {
-            Teacher NewTeacher = new Teacher();
 
             //Create an instance of a connection
             MySqlConnection Conn = School.AccessDatabase();
@@ -103,17 +102,18 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
             MySqlCommand cmd = Conn.CreateCommand();
 
             //SQL QUERY
-            cmd.CommandText = "Select * from teachers where teacherid = "+id;
+            cmd.CommandText = "Select * from teachers where teacherid ="+id;
 
             //Gather Result Set of Query into a variable
             MySqlDataReader ResultSet = cmd.ExecuteReader();
 
+            Teacher SelectedTeacher = new Teacher();
 
             while (ResultSet.Read())
             {
 
                 //Access Column information by the DB column name as an index
-                int TeacherId = (int)ResultSet["teacherid"];
+                int TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
                 string TeacherFname = (string)ResultSet["teacherfname"];
                 string TeacherLname = (string)ResultSet["teacherlname"];
                 string EmployeeNumber = (string)ResultSet["employeenumber"];
@@ -123,18 +123,19 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
 
 
 
-                NewTeacher.TeacherId = TeacherId;
-                NewTeacher.TeacherFname = TeacherFname;
-                NewTeacher.TeacherLname = TeacherLname;
-                NewTeacher.EmployeeNumber = EmployeeNumber;
-                NewTeacher.HireDate = HireDate;
-                NewTeacher.Salary = Salary;
+                SelectedTeacher.TeacherId = TeacherId;
+                SelectedTeacher.TeacherFname = TeacherFname;
+                SelectedTeacher.TeacherLname = TeacherLname;
+                SelectedTeacher.EmployeeNumber = EmployeeNumber;
+                SelectedTeacher.HireDate = HireDate;
+                SelectedTeacher.Salary = Salary;
 
 
             }
 
+            Conn.Close();
 
-            return NewTeacher;
+            return SelectedTeacher;
         }
         
 
