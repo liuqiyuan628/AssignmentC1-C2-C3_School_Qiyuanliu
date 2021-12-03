@@ -6,12 +6,19 @@
 <h2>List</h2>
 <p> This page is the informatio about all teachers </p>
 
+    <h2>list of Teachers</h2>
+    <div>
+        <a href="/Teacher/New">Create a new teacher</a>
+
+    </div>
+
 <div id="containerlist">
     <h2>List of Teachers</h2>
     <form action="/Teacher/List" method="GET">
         <input type="text" name="SearchKey" autocomplete="off" />
         <input type="submit" value="Search" />
     </form>
+
 
 
     @foreach (var teacher in Model)

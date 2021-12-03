@@ -6,6 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Diagnostics;
+
+
 
 namespace AssignmentC1_School_Qiyuanliu.Controllers
 {
@@ -52,12 +55,9 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
             {
                 //Access Column information by the DB column name as an index
                 int TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
-                string TeacherFname = (string)ResultSet["teacherfname"];
-                string TeacherLname = (string)ResultSet["teacherlname"];
-                string EmployeeNumber = (string)ResultSet["employeenumber"];
-                DateTime HireDate = (DateTime)ResultSet["hiredate"];
-                decimal Salary = (decimal)ResultSet["salary"];
-
+                string TeacherFname = (string)ResultSet["teacherfname"].ToString();
+                string TeacherLname = (string)ResultSet["teacherlname"].ToString();
+                string EmployeeNumber = (string)ResultSet["employeenumber"].ToString();
 
 
 
@@ -66,8 +66,6 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
                 NewTeacher.TeacherFname = TeacherFname;
                 NewTeacher.TeacherLname = TeacherLname;
                 NewTeacher.EmployeeNumber = EmployeeNumber;
-                NewTeacher.HireDate = HireDate;
-                NewTeacher.Salary = Salary;
 
 
 
@@ -83,8 +81,8 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
             return Teachers;
         }
 
-       
-        
+
+
         /// <summary>
         /// Find a teacher based on the teacher ID
         /// </summary>
@@ -92,9 +90,10 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
         /// <returns>The name of the teacher </returns>
         [HttpGet]
         [Route("api/TeacherData/findteacher/{id}")]
-      
-        public Teacher FindTeacher (int id)
+
+        public Teacher FindTeacher(int id)
         {
+            Teacher SelectedTeacher = new Teacher();
 
             //Create an instance of a connection
             MySqlConnection Conn = School.AccessDatabase();
@@ -106,21 +105,22 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
             MySqlCommand cmd = Conn.CreateCommand();
 
             //SQL QUERY
-            cmd.CommandText = "Select * from teachers where teacherid ="+id;
+            cmd.CommandText = "Select * from teachers where teacherid =" + id;
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.Prepare();
 
             //Gather Result Set of Query into a variable
             MySqlDataReader ResultSet = cmd.ExecuteReader();
 
-            Teacher SelectedTeacher = new Teacher();
 
             while (ResultSet.Read())
             {
 
                 //Access Column information by the DB column name as an index
                 int TeacherId = Convert.ToInt32(ResultSet["teacherid"]);
-                string TeacherFname = (string)ResultSet["teacherfname"];
-                string TeacherLname = (string)ResultSet["teacherlname"];
-                string EmployeeNumber = (string)ResultSet["employeenumber"];
+                string TeacherFname = (string)ResultSet["teacherfname"].ToString();
+                string TeacherLname = (string)ResultSet["teacherlname"].ToString();
+                string EmployeeNumber = (string)ResultSet["employeenumber"].ToString();
                 DateTime HireDate = (DateTime)ResultSet["hiredate"];
                 decimal Salary = (decimal)ResultSet["salary"];
 
@@ -141,7 +141,68 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
 
             return SelectedTeacher;
         }
-        
+
+        /// <summary>
+        /// delete a teacher on database
+        /// </summary>
+        /// <param name="id"></param>
+        /// 
+        [HttpPost]
+        public void DeleteTeacher(int id)
+        {
+            //Create an instance of a connection
+            MySqlConnection Conn = School.AccessDatabase();
+
+            //Open the connection between the web server and database
+            Conn.Open();
+
+            //Establish a new command (query) for our database
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            //SQL QUERY
+            cmd.CommandText = "Delete from teachers where teacherid=@id";
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+
+        }
+
+
+
+        /// <summary>
+        /// add a teacher to database
+        /// </summary>
+        /// <param name="NewTeacher"></param>
+        [HttpPost]
+        public void AddTeacher([FromBody]Teacher NewTeacher)
+        {
+            MySqlConnection Conn = School.AccessDatabase();
+
+            Debug.WriteLine(NewTeacher.TeacherFname);
+
+
+            Conn.Open();
+
+            MySqlCommand cmd = Conn.CreateCommand();
+
+
+            cmd.CommandText = "insert into teachers (teacherFname,teacherLname,employeenumber,hiredate,salary) value (@TeacherFname,@TeacherLname,@EmployeeNumber,CURRENT_DATE(),@Salary)";
+            cmd.Parameters.AddWithValue("@TeacherFname", NewTeacher.TeacherFname);
+            cmd.Parameters.AddWithValue("@TeacherLname", NewTeacher.TeacherLname);
+            cmd.Parameters.AddWithValue("@EmployeeNumber", NewTeacher.EmployeeNumber);
+            cmd.Parameters.AddWithValue("@Salary", NewTeacher.Salary);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+        }
+
 
     } 
 } 
