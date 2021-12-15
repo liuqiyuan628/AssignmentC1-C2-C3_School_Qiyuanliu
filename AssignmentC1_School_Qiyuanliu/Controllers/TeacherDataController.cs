@@ -93,7 +93,7 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
 
         public Teacher FindTeacher(int id)
         {
-            Teacher SelectedTeacher = new Teacher();
+            Teacher NewTeacher = new Teacher();
 
             //Create an instance of a connection
             MySqlConnection Conn = School.AccessDatabase();
@@ -127,20 +127,58 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
 
 
 
-                SelectedTeacher.TeacherId = TeacherId;
-                SelectedTeacher.TeacherFname = TeacherFname;
-                SelectedTeacher.TeacherLname = TeacherLname;
-                SelectedTeacher.EmployeeNumber = EmployeeNumber;
-                SelectedTeacher.HireDate = HireDate;
-                SelectedTeacher.Salary = Salary;
+                NewTeacher.TeacherId = TeacherId;
+                NewTeacher.TeacherFname = TeacherFname;
+                NewTeacher.TeacherLname = TeacherLname;
+                NewTeacher.EmployeeNumber = EmployeeNumber;
+                NewTeacher.HireDate = HireDate;
+                NewTeacher.Salary = Salary;
 
 
             }
 
             Conn.Close();
 
-            return SelectedTeacher;
+            return NewTeacher;
         }
+        /// <summary>
+        /// update a teacher
+        /// </summary>
+        /// <param name="SelectedTeacher"></param>
+        public void UpdateTeacher([FromBody]Teacher TeacherInfo)
+        {
+            Debug.WriteLine("id is: " + TeacherInfo.TeacherId);
+            Debug.WriteLine("First name is: " + TeacherInfo.TeacherFname);
+            Debug.WriteLine("Last name is: " + TeacherInfo.TeacherLname);
+            Debug.WriteLine("Employee Number is: " + TeacherInfo.EmployeeNumber);
+            Debug.WriteLine("Salary is: " + TeacherInfo.Salary);
+            Debug.WriteLine("Hire Date is: " + TeacherInfo.HireDate);
+
+
+            MySqlConnection Conn = School.AccessDatabase();
+
+            Conn.Open();
+
+            string query = "update teachers set TeacherFname=@TeacherFname, TeacherLname=@TeacherLname, EmployeeNumber=@EmployeeNumber, Salary=@Salary, HireDate=@HireDate where TeacherId=@id";
+
+
+            MySqlCommand cmd = Conn.CreateCommand();
+            cmd.CommandText = query;
+            cmd.Parameters.AddWithValue("@id", TeacherInfo.TeacherId);
+            cmd.Parameters.AddWithValue("@TeacherFname", TeacherInfo.TeacherFname);
+            cmd.Parameters.AddWithValue("@TeacherLname", TeacherInfo.TeacherLname);
+            cmd.Parameters.AddWithValue("@EmployeeNumber", TeacherInfo.EmployeeNumber);
+            cmd.Parameters.AddWithValue("@Salary", TeacherInfo.Salary);
+            cmd.Parameters.AddWithValue("@HireDate", TeacherInfo.HireDate);
+            cmd.Prepare();
+
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+        }
+
 
         /// <summary>
         /// delete a teacher on database

@@ -30,23 +30,62 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
         public ActionResult Show(int id)
         {
             TeacherDataController controller = new TeacherDataController();
-            Teacher NewTeacher = controller.FindTeacher(id);
+            Teacher SelectedTeacher = controller.FindTeacher(id);
 
 
-            return View(NewTeacher);
+            return View(SelectedTeacher);
 
+        }
+
+        // This update will render a page given an id of a teacher
+        [HttpGet]
+        public ActionResult Update(int id)
+        {
+            // find a teacher by id
+            TeacherDataController controller = new TeacherDataController();
+            Teacher SelectedTeacher = controller.FindTeacher(id);
+
+            return View(SelectedTeacher);
         }
 
 
 
-        //GET : /Author/DeleteConfirm/{id}
+
+        // This method will actually update the teacher!!!
+        [HttpPost]
+        public ActionResult Update(int id, string TeacherFname, string TeacherLname, string EmployeeNumber, decimal Salary, DateTime HireDate)
+        {
+            Debug.WriteLine("I am trying to update a teacher with id:" + id);
+            Debug.WriteLine("I am trying to update a teacher with first name:" + TeacherFname);
+            Debug.WriteLine("I am trying to update a teacher with last name:" + TeacherLname);
+            Debug.WriteLine("I am trying to update a teacher with Employee Number:" + EmployeeNumber);
+            Debug.WriteLine("I am trying to update a teacher with Salary:" + Salary);
+            Debug.WriteLine("I am trying to update a teacher with HireDate:" + HireDate);
+
+            TeacherDataController controller = new TeacherDataController();
+
+            Teacher TeacherInfo = new Teacher();
+            TeacherInfo.TeacherId = id;
+            TeacherInfo.TeacherFname = TeacherFname;
+            TeacherInfo.TeacherLname = TeacherLname;
+            TeacherInfo.Salary = Salary;
+            TeacherInfo.EmployeeNumber = EmployeeNumber;
+            TeacherInfo.HireDate = HireDate;
+
+            controller.UpdateTeacher(TeacherInfo);
+
+            return RedirectToAction("Show/" + id);
+        }
+        
+
+        //GET : /Teacher/DeleteConfirm/{id}
         public ActionResult DeleteConfirm(int id)
         {
             TeacherDataController controller = new TeacherDataController();
-            Teacher NewAuthor = controller.FindTeacher(id);
+            Teacher NewTeacher = controller.FindTeacher(id);
 
 
-            return View(NewAuthor);
+            return View(NewTeacher);
         }
 
 
@@ -76,7 +115,7 @@ namespace AssignmentC1_School_Qiyuanliu.Controllers
 
         public ActionResult Create(string TeacherFname, string TeacherLname, string EmployeeNumber, decimal Salary)
         {
-            Debug.WriteLine("You are trying to add a teacher with name:" + TeacherFname + TeacherLname+"and the employeen number is "+ EmployeeNumber +"; salary is "+ Salary);
+            Debug.WriteLine("You are trying to add a teacher with name:" + TeacherFname + TeacherLname + "and the employeen number is " + EmployeeNumber + "; salary is " + Salary);
 
 
             Teacher NewTeacher = new Teacher();

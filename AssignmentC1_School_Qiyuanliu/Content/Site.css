@@ -17,15 +17,16 @@ textarea {
 }
 
 .navlink {
-    text-align:right;
-    margin-top:30px;
-    float:right;
+    margin-top: 30px;
+   
 }
 
+
+
 #containerlist, #containershow {
-    width:80%;
-    margin:0 auto;
-    margin-top:80px;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 80px;
 }
 
 .listitem {
